@@ -1,0 +1,14 @@
+{
+  "_note": "ISIN vérifiés par recherche web le 22/11/2026 ; tickers Yahoo et disponibilité Trade Republic À VÉRIFIER dans l'app avant tout ordre.",
+  "assets": [
+    {"name": "iShares MSCI World Swap PEA", "isin": "IE0002XZSHO1", "ticker": "WPEA.PA", "ter": 0.0020, "wrapper": "PEA", "kind": "ETF", "ticker_status": "à vérifier"},
+    {"name": "Amundi PEA Monde (MSCI World)", "isin": "FR001400U5Q4", "ticker": "DCAM.PA", "ter": 0.0020, "wrapper": "PEA", "kind": "ETF", "ticker_status": "à vérifier"},
+    {"name": "Amundi MSCI World (CW8)", "isin": "LU1681043599", "ticker": "CW8.PA", "ter": 0.0038, "wrapper": "PEA", "kind": "ETF", "ticker_status": "à vérifier"}
+  ],
+  "benchmarks": [
+    {"name": "S&P 500", "ticker": "^GSPC"}, {"name": "CAC 40", "ticker": "^FCHI"},
+    {"name": "Nasdaq 100", "ticker": "^NDX"}, {"name": "DAX", "ticker": "^GDAXI"},
+    {"name": "FTSE 100", "ticker": "^FTSE"}, {"name": "Nikkei 225", "ticker": "^N225"},
+    {"name": "Or (USD)", "ticker": "GC=F"}, {"name": "Bitcoin (EUR)", "ticker": "BTC-EUR"}
+  ]
+}
