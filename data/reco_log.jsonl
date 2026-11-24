@@ -1,0 +1,3 @@
+{"ts": "2026-11-24T12:55:38+00:00", "isin": "IE0002XZSHO1", "reco": "ATTENDRE", "price": 6.839000225067139, "price_date": "2026-11-24", "scores": {"quality": 69, "valuation_proxy": 61, "risk": 38, "potential": 64, "confidence": 18}}
+{"ts": "2026-11-24T12:55:38+00:00", "isin": "FR001400U5Q4", "reco": "ATTENDRE", "price": 6.054999828338623, "price_date": "2026-11-24", "scores": {"quality": 67, "valuation_proxy": 61, "risk": 35, "potential": 62, "confidence": 12}}
+{"ts": "2026-11-24T12:55:38+00:00", "isin": "LU1681043599", "reco": "ACHETER PROGRESSIVEMENT", "price": 678.77001953125, "price_date": "2026-11-24", "scores": {"quality": 62, "valuation_proxy": 61, "risk": 48, "potential": 62, "confidence": 70}}
