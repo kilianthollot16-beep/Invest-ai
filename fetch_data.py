@@ -19,17 +19,44 @@ def load_prices_yf(tickers, years=15):
             pass
     return out
 
+def group_key(a):
+    """Fonds qui suivent le même indice. Déduit du nom (World/Monde -> MSCI World)."""
+    n = a["name"].lower()
+    return "MSCI World" if ("world" in n or "monde" in n) else a["name"]
+
+def tracking_diff(fund, ref):
+    """Écart de rendement annualisé fonds - référence, sur la période commune (None si < 1 an)."""
+    j = pd.concat([fund, ref], axis=1, join="inner").dropna()
+    if len(j) < 250: return None
+    yrs = (j.index[-1] - j.index[0]).days / 365.25
+    cg = lambda s: (s.iloc[-1] / s.iloc[0]) ** (1 / yrs) - 1
+    return {"years": round(yrs, 2), "ann_diff": float(cg(j.iloc[:, 0]) - cg(j.iloc[:, 1]))}
+
 def build(prices, wl, portfolio, now=None, synthetic=False):
     now = now or dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
     held = {p["isin"] for p in portfolio.get("positions", [])}
     ceiling = portfolio.get("settings", {}).get("risk_ceiling", 65)
     assets, missing = [], []
+    groups = {}
     for a in wl["assets"]:
         s = prices.get(a["ticker"])
         if s is None: missing.append(a["ticker"]); continue
-        m = M.all_metrics(s); sc = S.score_asset(m, a["ter"])
-        rec, why = S.recommend(sc, a["isin"] in held, ceiling)
-        assets.append({**a, "metrics": m, "scores": sc, "recommendation": rec, "why": why})
+        groups.setdefault(group_key(a), []).append((a, s))
+    for g, members in groups.items():
+        # Référence du groupe : le fonds au plus long historique (même indice -> mêmes risques/rendements)
+        ref_a, ref_s = max(members, key=lambda x: len(x[1]))
+        ref_m = M.all_metrics(ref_s)
+        base = S.score_asset(ref_m, None)  # qualité de l'indice, sans les frais du fonds
+        rec, why = S.recommend(base, any(x[0]["isin"] in held for x in members), ceiling)
+        eligible = [x for x in members if len(x[1]) >= 250]
+        pref = min(eligible, key=lambda x: (x[0]["ter"], -len(x[1])))[0]["isin"] if eligible else None
+        for a, s in members:
+            m = M.all_metrics(s)
+            td = None if a is ref_a else tracking_diff(s, ref_s)
+            note = f"Notes calculées sur l'historique de {ref_a['name']} ({ref_m['history_years']} ans), même indice."
+            assets.append({**a, "metrics": m, "scores": base, "cost_score": S.cost_score(a["ter"]),
+                           "index_group": g, "index_proxy": ref_a["ticker"], "tracking_diff_vs_ref": td,
+                           "preferred": a["isin"] == pref, "recommendation": rec, "why": why + [note]})
     bench = []
     for b in wl["benchmarks"]:
         s = prices.get(b["ticker"])
