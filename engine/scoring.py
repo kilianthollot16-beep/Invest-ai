@@ -28,6 +28,10 @@ def score_asset(m: dict, ter: float | None) -> dict:
               dict(quality=q, valuation_proxy=v, risk=r, potential=p).items()}
     return {**scores, "confidence": round(confidence)}
 
+def cost_score(ter: float | None) -> int | None:
+    """100 = gratuit, 0 = 1 %/an ou plus. 0,20 % -> 80 ; 0,38 % -> 62."""
+    return None if ter is None else round(_clip(100 - ter * 10000))
+
 def recommend(s: dict, held: bool, risk_ceiling: int = 65) -> tuple[str, list[str]]:
     why = []
     if s["confidence"] < 40:
